@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { PropagateLoader } from "react-spinners";
+import fileDownload from 'js-file-download'
 
 export default function Home() {
   const [prompt, setPrompt] = useState<string>("");
@@ -37,6 +38,14 @@ export default function Home() {
       setImage(undefined);
     }
   };
+
+  const handleDownload = (url:string, filename:string) => {
+    fetch(url)
+    .then((res: any) => {
+      fileDownload(res.data, filename)
+    })
+  }
+   
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center text-black text-center">
@@ -86,14 +95,20 @@ export default function Home() {
           Send
         </button>
       </form>
-      {image ? (
+      {image ? (<>
         <Image
           src={image}
           width={Number(size.split("x")[0])}
           height={Number(size.split("x")[1])}
           alt="generated image"
           priority
-        />
+          />
+        <h1 className="text-white text-2xl">{image}</h1>
+        <a href={image} download="picture.png" target="_blank" className="text-2xl text-white">Download</a>
+        <a href={image} download="png" className="text-white text-2xl">Download Image</a>
+        <button onClick={() => {handleDownload(image, 'test-download.jpg')}} className="text-2xl text-emerald-300">Download Image</button>
+          </>
+
       ) : isloading ? (
         <PropagateLoader
           color="#fff"
